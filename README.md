@@ -31,8 +31,8 @@ A multi-cloud solution leveraging AWS AI services and Azure Cognitive Services f
 - Python 3.9+ environment
 
 ### 🔹 1. Clone the Repository
-git clone https://github.com/<your-username>/<your-repository-name>.git<br>
-cd <your-repository-name>
+git clone https://github.com/your-username/your-repository-name.git<br>
+cd your-repository-name
 
 ### 🔹 2. Install Dependencies
 pip install -r requirements.txt
