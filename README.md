@@ -52,6 +52,6 @@ AZURE_CONTAINER_NAME=your_azure_container_name<br>
 ### 🔹 4. Run the Application
 python app.py
 
-
+------------
 
 Developed with ❤️ using AWS & Azure services...
