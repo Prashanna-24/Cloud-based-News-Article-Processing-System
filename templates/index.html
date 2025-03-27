@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Speech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: radial-gradient(circle, #0f2027, #203a43, #2c5364);
+            overflow-x: hidden;
+            overflow-y: auto;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+        }
+        .floating {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            filter: blur(10px);
+            animation: float 8s infinite linear alternate;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(40px) translateX(40px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        button {
+            transition: all 0.3s ease-in-out;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        function showLoading() {
+            document.getElementById('loadingScreen').classList.remove('hidden');
+        }
+        function hideLoading() {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }
+    </script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-6 relative">
+    <div id="loadingScreen" class="loading-screen hidden">
+        <div class="spinner"></div>
+        <p class="mt-4 text-white text-lg font-semibold">Processing...</p>
+    </div>
+
+    <div class="floating" style="top: 10%; left: 15%; animation-duration: 14s;"></div>
+    <div class="floating" style="top: 40%; left: 80%; animation-duration: 18s;"></div>
+    <div class="floating" style="top: 60%; left: 30%; animation-duration: 12s;"></div>
+    <div class="floating" style="top: 90%; left: 50%; animation-duration: 16s;"></div>
+
+    <div class="glass w-full max-w-lg text-center relative z-10 animate-fadeIn">
+        <h1 class="text-4xl font-extrabold text-white mb-4 animate-pulse">Upload a News Image</h1>
+        <form method="POST" enctype="multipart/form-data" class="space-y-4 animate-slideUp" onsubmit="showLoading()">
+            <input type="file" name="image" accept="image/*" class="block w-full text-sm text-gray-300 border border-gray-500 rounded-lg p-2 cursor-pointer bg-transparent" required>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Upload</button>
+        </form>
+        
+        {% if text %}
+        <div class="mt-6 p-4 bg-gray-900 bg-opacity-50 rounded-lg shadow-md animate-fadeIn">
+            <h2 class="text-xl font-semibold text-white">Summary:</h2>
+            <p class="text-gray-300">{{ text }}</p>
+        </div>
+        {% endif %}
+
+        {% if audio_url %}
+        <div class="mt-6 p-4 bg-gray-900 bg-opacity-50 rounded-lg shadow-md animate-slideUp">
+            <h2 class="text-xl font-semibold text-white">Audio:</h2>
+            <audio controls class="w-full mt-2">
+                <source src="{{ audio_url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        {% endif %}
+
+        {% if sentiment %}
+        <div class="mt-6 p-4 bg-gray-900 bg-opacity-50 rounded-lg shadow-md animate-fadeIn">
+            <h3 class="text-xl font-semibold text-white">Sentiment Analysis Results:</h3>
+            <p class="text-gray-300">Overall Sentiment: <strong class="text-blue-400">{{ sentiment.sentiment }}</strong></p>
+            <div class="confidence-scores mt-2">
+                <p class="text-gray-400 font-medium">Confidence Scores:</p>
+                <ul class="text-gray-300 space-y-1">
+                    <li>Positive: {{ "%.0f"|format(sentiment.confidence.positive * 100) }}%</li>
+                    <li>Neutral: {{ "%.0f"|format(sentiment.confidence.neutral * 100) }}%</li>
+                    <li>Negative: {{ "%.0f"|format(sentiment.confidence.negative * 100) }}%</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
